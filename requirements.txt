@@ -1,0 +1,4 @@
+pandas
+robotframework
+robotframework-seleniumlibrary
+xlrd
