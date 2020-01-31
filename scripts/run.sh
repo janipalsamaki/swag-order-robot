@@ -1,5 +1,8 @@
 #!/bin/bash
-#
-# Run the robot.
 
-python3 -m robot ./swag-order-robot.robot
+. venv/bin/activate
+
+python --version
+python -c "import platform; print(platform.uname())"
+
+python -m robot -d output swag-order-robot.robot
