@@ -6,8 +6,10 @@ Variables       variables.py
 *** Keywords ***
 Process orders
     Open Swag Labs
-    Login           ${SWAG_LABS_USER_NAME}  ${SWAG_LABS_PASSWORD}
-    @{orders}=      Collect orders
+    Variable Should Exist   ${SWAG_LABS_USER_NAME}
+    Variable Should Exist   ${SWAG_LABS_PASSWORD}
+    Login                   ${SWAG_LABS_USER_NAME}  ${SWAG_LABS_PASSWORD}
+    @{orders}=              Collect orders
 
     FOR     ${order}    IN  @{orders}
         Run Keyword And Continue On Failure     Process order   ${order}
