@@ -43,6 +43,7 @@ Process order
     [Arguments]                     ${order}
     Reset application state
     Open products page
+    Assert cart is empty
     Wait Until Keyword Succeeds     3x  1s  Add product to cart     ${order}
     Wait Until Keyword Succeeds     3x  1s  Open cart
     Checkout                        ${order}
@@ -52,6 +53,13 @@ Reset application state
     Click Button                    css:.bm-burger-button button
     Wait Until Element Is Visible   id:reset_sidebar_link
     Click Link                      reset_sidebar_link
+
+Open products page
+    Go To   ${SWAG_LABS_URL}/inventory.html
+
+Assert cart is empty
+    Element Text Should Be              css:.shopping_cart_link     ${EMPTY}
+    Page Should Not Contain Element     css:.shopping_cart_badge
 
 Add product to cart
     [Arguments]             ${order}
@@ -92,6 +100,3 @@ Assert checkout confirmation page
 
 Assert checkout complete page
     Location Should Be  ${SWAG_LABS_URL}/checkout-complete.html
-
-Open products page
-    Go To   ${SWAG_LABS_URL}/inventory.html
