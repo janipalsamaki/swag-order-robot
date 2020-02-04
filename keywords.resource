@@ -1,13 +1,13 @@
 *** Settings ***
-Library         SeleniumLibrary
-Library         lib/Orders.py
-Variables       variables.py
+Library     OperatingSystem
+Library     SeleniumLibrary
+Library     lib/Orders.py
+Variables   variables.py
 
 *** Keywords ***
 Process orders
+    Validate prerequisites
     Open Swag Labs
-    Variable Should Exist   ${SWAG_LABS_USER_NAME}
-    Variable Should Exist   ${SWAG_LABS_PASSWORD}
     Login                   ${SWAG_LABS_USER_NAME}  ${SWAG_LABS_PASSWORD}
     @{orders}=              Collect orders
 
@@ -16,6 +16,13 @@ Process orders
     END
 
     [Teardown]      Close Browser
+
+Validate prerequisites
+    Log                     Validating prerequisites...     console=yes
+    File Should Exist       ${EXCEL_FILE_PATH}              Orders Excel file does not exist (${EXCEL_FILE_PATH}).
+    Variable Should Exist   ${SWAG_LABS_USER_NAME}          Swag Labs user name does not exist.
+    Variable Should Exist   ${SWAG_LABS_PASSWORD}           Swag Labs password does not exist.
+    Log                     Prerequisites OK.               console=yes
 
 Open Swag Labs
     Open Browser    ${SWAG_LABS_URL}    Chrome
