@@ -46,6 +46,7 @@ Process order
     Assert cart is empty
     Wait Until Keyword Succeeds     3x  1s  Add product to cart     ${order}
     Wait Until Keyword Succeeds     3x  1s  Open cart
+    Assert one product in cart      ${order}
     Checkout                        ${order}
     Open products page
 
@@ -68,10 +69,11 @@ Add product to cart
     ${product}=             Get WebElement  ${locator}
     ${add_to_cart_button}=  Set Variable    ${product.find_element_by_class_name("btn_primary")}
     Click Button            ${add_to_cart_button}
-    Assert item in cart    
+    Assert items in cart    1
 
-Assert item in cart
-    Element Text Should Be  css:.shopping_cart_badge    1
+Assert items in cart
+    [Arguments]             ${quantity}
+    Element Text Should Be  css:.shopping_cart_badge    ${quantity}
 
 Open cart
     Click Link          css:.shopping_cart_link
@@ -79,6 +81,11 @@ Open cart
 
 Assert cart page
     Location Should Be  ${SWAG_LABS_URL}/cart.html
+
+Assert one product in cart
+    [Arguments]             ${order}
+    Element Text Should Be  css:.cart_quantity          1
+    Element Text Should Be  css:.inventory_item_name    ${order["item"]}
 
 Checkout
     [Arguments]                         ${order}
