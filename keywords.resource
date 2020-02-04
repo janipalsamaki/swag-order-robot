@@ -18,33 +18,40 @@ Process orders
     [Teardown]                      Close Browser
 
 Validate prerequisites
-    File Should Exist       ${EXCEL_FILE_PATH}      Orders Excel file does not exist (${EXCEL_FILE_PATH}).
-    Variable Should Exist   ${SWAG_LABS_USER_NAME}  Swag Labs user name does not exist.
-    Variable Should Exist   ${SWAG_LABS_PASSWORD}   Swag Labs password does not exist.
+    File Should Exist       ${EXCEL_FILE_PATH}
+    Variable Should Exist   ${SWAG_LABS_USER_NAME}
+    Variable Should Exist   ${SWAG_LABS_PASSWORD}
 
 Open Swag Labs
     Open Browser    ${SWAG_LABS_URL}    Chrome
 
 Login
-    [Arguments]                 ${user_name}    ${password}
-    Input Text                  user-name       ${user_name}
-    Input Password              password        ${password}
+    [Arguments]         ${user_name}    ${password}
+    Input Text          user-name       ${user_name}
+    Input Password      password        ${password}
     Submit Form
-    Assert login successful
+    Assert logged in
 
-Assert login successful
+Assert logged in
     Location Should Be  ${SWAG_LABS_URL}/inventory.html
 
 Collect orders
-    @{orders}=  Get orders          ./data/Data.xlsx
+    @{orders}=  Get orders          ${EXCEL_FILE_PATH}
     [Return]    @{orders}
 
 Process order
-    [Arguments]             ${order}
-    Add product to cart     ${order}
-    Open cart
-    Checkout                ${order}
+    [Arguments]                     ${order}
+    Reset application state
     Open products page
+    Wait Until Keyword Succeeds     3x  1s  Add product to cart     ${order}
+    Wait Until Keyword Succeeds     3x  1s  Open cart
+    Checkout                        ${order}
+    Open products page
+
+Reset application state
+    Click Button                    css:.bm-burger-button button
+    Wait Until Element Is Visible   id:reset_sidebar_link
+    Click Link                      reset_sidebar_link
 
 Add product to cart
     [Arguments]             ${order}
@@ -53,18 +60,38 @@ Add product to cart
     ${product}=             Get WebElement  ${locator}
     ${add_to_cart_button}=  Set Variable    ${product.find_element_by_class_name("btn_primary")}
     Click Button            ${add_to_cart_button}
+    Assert item in cart    
+
+Assert item in cart
+    Element Text Should Be  css:.shopping_cart_badge    1
 
 Open cart
-    Click Link  css:.shopping_cart_link
+    Click Link          css:.shopping_cart_link
+    Assert cart page
+
+Assert cart page
+    Location Should Be  ${SWAG_LABS_URL}/cart.html
 
 Checkout
-    [Arguments]     ${order}
-    Click Link      css:.checkout_button
-    Input Text      first-name      ${order["first_name"]}
-    Input Text      last-name       ${order["last_name"]}
-    Input Text      postal-code     ${order["zip"]}
+    [Arguments]                         ${order}
+    Click Link                          css:.checkout_button
+    Assert checkout information page
+    Input Text                          first-name      ${order["first_name"]}
+    Input Text                          last-name       ${order["last_name"]}
+    Input Text                          postal-code     ${order["zip"]}
     Submit Form
-    Click Link      css:.btn_action
+    Assert checkout confirmation page   
+    Click Link                          css:.btn_action
+    Assert checkout complete page
+
+Assert checkout information page
+    Location Should Be  ${SWAG_LABS_URL}/checkout-step-one.html
+    
+Assert checkout confirmation page
+    Location Should Be  ${SWAG_LABS_URL}/checkout-step-two.html
+
+Assert checkout complete page
+    Location Should Be  ${SWAG_LABS_URL}/checkout-complete.html
 
 Open products page
     Go To   ${SWAG_LABS_URL}/inventory.html
