@@ -8,33 +8,35 @@ Variables   variables.py
 Process orders
     Validate prerequisites
     Open Swag Labs
-    Login                   ${SWAG_LABS_USER_NAME}  ${SWAG_LABS_PASSWORD}
-    @{orders}=              Collect orders
+    Wait Until Keyword Succeeds     3x  1s  Login   ${SWAG_LABS_USER_NAME}  ${SWAG_LABS_PASSWORD}
+    @{orders}=                      Collect orders
 
     FOR     ${order}    IN  @{orders}
         Run Keyword And Continue On Failure     Process order   ${order}
     END
 
-    [Teardown]      Close Browser
+    [Teardown]                      Close Browser
 
 Validate prerequisites
-    Log                     Validating prerequisites...     console=yes
-    File Should Exist       ${EXCEL_FILE_PATH}              Orders Excel file does not exist (${EXCEL_FILE_PATH}).
-    Variable Should Exist   ${SWAG_LABS_USER_NAME}          Swag Labs user name does not exist.
-    Variable Should Exist   ${SWAG_LABS_PASSWORD}           Swag Labs password does not exist.
-    Log                     Prerequisites OK.               console=yes
+    File Should Exist       ${EXCEL_FILE_PATH}      Orders Excel file does not exist (${EXCEL_FILE_PATH}).
+    Variable Should Exist   ${SWAG_LABS_USER_NAME}  Swag Labs user name does not exist.
+    Variable Should Exist   ${SWAG_LABS_PASSWORD}   Swag Labs password does not exist.
 
 Open Swag Labs
     Open Browser    ${SWAG_LABS_URL}    Chrome
 
 Login
-    [Arguments]     ${user_name}    ${password}
-    Input Text      user-name       ${user_name}
-    Input Password  password        ${password}
+    [Arguments]                 ${user_name}    ${password}
+    Input Text                  user-name       ${user_name}
+    Input Password              password        ${password}
     Submit Form
+    Assert login successful
+
+Assert login successful
+    Location Should Be  ${SWAG_LABS_URL}/inventory.html
 
 Collect orders
-    @{orders}=  Get orders  ./data/Data.xlsx
+    @{orders}=  Get orders          ./data/Data.xlsx
     [Return]    @{orders}
 
 Process order
@@ -65,4 +67,4 @@ Checkout
     Click Link      css:.btn_action
 
 Open products page
-    Go To   ${SWAG_LABS_URL}inventory.html
+    Go To   ${SWAG_LABS_URL}/inventory.html
