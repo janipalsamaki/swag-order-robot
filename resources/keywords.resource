@@ -1,7 +1,7 @@
 *** Settings ***
 Library     OperatingSystem
+Library     Orders
 Library     SeleniumLibrary
-Library     lib/Orders.py
 Variables   variables.py
 
 *** Keywords ***
