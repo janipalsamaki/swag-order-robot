@@ -222,7 +222,7 @@ Documentation   Swag order robot. Places orders at https://www.saucedemo.com/
 ...             by processing a spreadsheet of orders and ordering the
 ...             specified products using browser automation. Uses environment
 ...             variables for credentials.
-Resource        keywords.resource
+Resource        keywords.robot
 
 *** Tasks ***
 Place orders
@@ -233,9 +233,9 @@ Place orders
 
 Inside the `swag-order-robot` directory, create a directory by name `resources`.
 
-Inside the `resources` directory, create a file by name `keywords.resource`.
+Inside the `resources` directory, create a file by name `keywords.robot`.
 
-Paste the following Robot Framework code in the `keywords.resource` file:
+Paste the following Robot Framework code in the `keywords.robot` file:
 
 ```robot
 *** Settings ***
@@ -471,7 +471,7 @@ swag-order-robot
 │   └── Orders.py
 ├── requirements.txt
 ├── resources
-│   └── keywords.resource
+│   └── keywords.robot
 ├── scripts
 │   ├── prepare.sh (or prepare.bat)
 │   └── run.sh (or run.bat)
